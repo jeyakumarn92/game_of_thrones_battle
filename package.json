@@ -1,7 +1,7 @@
 {
-  "name": "express-es6-starter",
+  "name": "Game_of_thrones",
   "version": "0.1.0",
-  "description": "Seed project for easily getting started with express for es6",
+  "description": "Game Of Thrones Battle API",
   "scripts": {
     "start": "nodemon ./server.js --exec babel-node",
     "build": "babel . -d dist --presets es2015,stage-2 --ignore spec.js,node_modules",
@@ -10,16 +10,11 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/tomyitav/express-es6-starter.git"
-  },
   "keywords": [
     "Node.js",
     "Javascript",
     "Express"
   ],
-  "author": "Tom Yitav <tomyitav@gmail.com>",
   "dependencies": {
     "async": "^2.6.0",
     "body-parser": "^1.15.2",
