@@ -42,8 +42,7 @@ controller.battleCount = async (req, res) => {
         res.send({
             status: "success",
             data: {
-               // battle_occured_count: battles.length
-			   battle_occured_count: battles
+			   battle_occured_count: (_.isArray(battles)) ?  battles.length : battles
             }
         });
     } catch (err) {
