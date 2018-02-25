@@ -18,13 +18,13 @@ controller.listBattlePlace = async (req, res) => {
             return u._id.location;
         })
         res.send({
-            battle_places: battles
-        });
+			status:"success",data : battles
+			});
     } catch (err) {
         logger.error('Error in getting Battles- ' + err);
-        res.send({
-            error: 'Something Went Wrong!'
-        });
+        res.status(500).send({
+			error: 'Something Went Wrong!' 
+		});
     }
 }
 
@@ -38,14 +38,16 @@ controller.battleCount = async (req, res) => {
     try {
         let battles = await Battle.battleCount();
         logger.info('sending Battle Count...');
-        res.send({
-            battle_occured: battles.length
-        });
+		res.send({
+			status:"success",data : {
+            battle_occured_count: battles.length
+        }
+			});
     } catch (err) {
         logger.error('Error in getting Battles- ' + err);
-        res.send({
-            'error': 'Something Went Wrong!'
-        });
+        res.status(500).send({
+			error: 'Something Went Wrong!' 
+		});
     }
 }
 
@@ -186,18 +188,20 @@ controller.battleStats = async (req, res) => {
             }
         }], function(err, statsResponse) {
             if (err) {
-                res.send({
-                    error: 'Something Went Wrong'
-                });
+               res.status(500).send({
+			error: 'Something Went Wrong!' 
+		    });
             } else {
-                res.send(battleStats);
+				res.send({
+					status:"success",data:battleStats
+				})
             }
         })
     } catch (err) {
         logger.error('Error in Battle Stats- ' + err);
-        res.send({
-            error: 'Something Went Wrong'
-        });
+        res.status(500).send({
+			error: 'Something Went Wrong!' 
+		});
     }
 }
 
@@ -246,12 +250,13 @@ controller.battleSearch = async (req, res) => {
             await Battle.battleSearch(query) : {
                 error: 'Invalid Input'
             })
-        res.send(battles)
+        res.send({status : "success" , data : battles })
+		
     } catch (err) {
         logger.error('Error in battle search- ' + err);
-        res.send({
-            error: 'Something Went Wrong!'
-        });
+        res.status(500).send({
+			error: 'Something Went Wrong!' 
+		});
     }
 }
 

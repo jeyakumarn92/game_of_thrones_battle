@@ -3,6 +3,13 @@ import battleController from "../controllers/battles.controller"
 const router = express.Router()
 
 
+//Index route
+router.get('/', (req, res) => {
+    res.redirect('/list');
+});
+
+
+
 /**
 *  Method : GET
 *  /list - list all the places where battle has taken place
