@@ -2,11 +2,6 @@ import express from "express";
 import battleController from "../controllers/battles.controller"
 const router = express.Router()
 
-/*
-router.get('/allbattles', (req, res) => {
-    battleController.getAll(req, res);
-});
-*/
 
 /**
 *  Method : GET
@@ -43,5 +38,8 @@ router.get('/search', (req, res) => {
     battleController.battleSearch(req, res);
 });
 
+router.get("*",function(req,res){
+	res.send("Invalid Endpoint");
+})
 
 export default router;
