@@ -4,7 +4,7 @@ let config = {};
 
 config.logFileDir = path.join(__dirname, '../../log');
 config.logFileName = 'app.log';
-config.serverPort =  3001;
+config.serverPort = process.env.PORT || 3001;
 config.dbHost = "ds147668.mlab.com";
 config.dbPort = "47668";
 config.dbName = "battles";
