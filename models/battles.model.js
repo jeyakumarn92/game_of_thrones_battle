@@ -110,7 +110,9 @@ BattleModel.listBattlePlace = () => {
 
 /**
  *  returns the records based on search queries 
- *
+ *  AND used to search exact depends on input
+ *  Can change OR to get any related data depends on fields
+ *  Can use search text by index to find any data in any fields
  * @param <Object> subquery 
  * @return <Array> element
  */
@@ -131,63 +133,82 @@ BattleModel.battleSearch = (subquery) => {
 BattleModel.battleCount = () => {
     return BattleModel.aggregate({
         $match: {
-            $or: [{
-                    $and: [{
-                            $or: [{
-                                attacker_size: ''
-                            }, {
-                                defender_size: ''
-                            }]
-                        },
-                        {
-                            $and: [{
-                                major_death: {
-                                    $eq: 0
-                                }
-                            }, {
-                                major_capture: {
-                                    $eq: 0
-                                }
-                            }]
-                        }
-                    ]
-                },
-                {
+            $and: [{
+                $and: [{
                     $or: [{
-                        attacker_outcome: {
-                                    $eq: ''
-                         }
+                        attacker_king: {
+                            $ne: ''
+                        }
                     }, {
-                        battle_type: {
-                                    $eq: ''
+                        attacker_commander: {
+                            $ne: ''
+                        }
+                    }, {
+                        attacker_1: {
+                            $ne: ''
+                        }
+                    }, {
+                        attacker_2: {
+                            $ne: ''
+                        }
+                    }, {
+                        attacker_3: {
+                            $ne: ''
+                        }
+                    }, {
+                        attacker_4: {
+                            $ne: ''
+                        }
+                    }, {
+                        attacker_size: {
+                            $nin: [0, '']
                         }
                     }]
-                },
-                {
+                }, {
                     $or: [{
-                            $and: [{
-                                attacker_king: ''
-                            }, {
-                                attacker_commander: {
-                                    $eq: ''
-                                }
-                            }]
-                        },
-                        {
-                            $and: [{
-                                defender_king: ''
-                            }, {
-                                defender_commander: {
-                                    $eq: ''
-                                }
-                            }]
+                        defender_king: {
+                            $ne: ''
                         }
-                    ]
-                }
-            ]
+                    }, {
+                        defender_commander: {
+                            $ne: ''
+                        }
+                    }, {
+                        defender_1: {
+                            $ne: ''
+                        }
+                    }, {
+                        defender_2: {
+                            $ne: ''
+                        }
+                    }, {
+                        defender_3: {
+                            $ne: ''
+                        }
+                    }, {
+                        defender_4: {
+                            $ne: ''
+                        }
+                    }, {
+                        defender_size: {
+                            $nin: [0, '']
+                        }
+                    }]
+                }]
+            }, {
+                $or: [{
+                    attacker_outcome: {
+                        $ne: ''
+                    }
+                }, {
+                    battle_type: {
+                        $ne: ''
+                    }
+                }]
+            }]
         }
-    });
-	//return BattleModel.aggregate({$match: {$or : [{ attacker_outcome: { $ne : '' }},{ battle_type: { $ne : '' } }]} })
+    })
+    //return BattleModel.aggregate({$match: {$or : [{ attacker_outcome: { $ne : '' }},{ battle_type: { $ne : '' } }]} })
 }
 
 

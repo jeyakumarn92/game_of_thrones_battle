@@ -9,7 +9,6 @@ router.get('/', (req, res) => {
 });
 
 
-
 /**
 *  Method : GET
 *  /list - list all the places where battle has taken place

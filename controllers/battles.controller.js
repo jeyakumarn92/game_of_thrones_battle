@@ -7,7 +7,7 @@ import async from 'async';
 const controller = {};
 
 /**
- * 
+ * List array of all places where battle has taken place
  *
  */
 controller.listBattlePlace = async (req, res) => {
@@ -18,44 +18,47 @@ controller.listBattlePlace = async (req, res) => {
             return u._id.location;
         })
         res.send({
-			status:"success",data : battles
-			});
+            status: "success",
+            data: battles
+        });
     } catch (err) {
         logger.error('Error in getting Battles- ' + err);
         res.status(500).send({
-			error: 'Something Went Wrong!' 
-		});
+            error: 'Something Went Wrong!'
+        });
     }
 }
 
 
 
 /**
- * 
- *
+ * Controller to count the number of battles occurred
+ * Used Aggregate stage for query operation
  */
 controller.battleCount = async (req, res) => {
     try {
         let battles = await Battle.battleCount();
         logger.info('sending Battle Count...');
-		res.send({
-			status:"success",data : {
-            battle_occured_count: battles.length
-        }
-			});
+        res.send({
+            status: "success",
+            data: {
+                battle_occured_count: battles.length
+            }
+        });
     } catch (err) {
         logger.error('Error in getting Battles- ' + err);
         res.status(500).send({
-			error: 'Something Went Wrong!' 
-		});
+            error: 'Something Went Wrong!'
+        });
     }
 }
 
 
 
 /**
+ * Controller for displaying Battle Stats
+ * Single Query model been reused for multiple tasks
  * 
- *
  */
 controller.battleStats = async (req, res) => {
     try {
@@ -65,10 +68,11 @@ controller.battleStats = async (req, res) => {
             battle_type: [],
             defender_size: {}
         };
-        async.parallel([function(statCallback) {
+        async.parallel([statCallback => {
+			
             //Most Active attacker
             try {
-                Battle.mostActive('attacker_king', function(err, callbackAttacker) {
+                Battle.mostActive('attacker_king', (err, callbackAttacker) => {
                     if (err)
                         return statCallback(err, null)
                     else {
@@ -83,10 +87,11 @@ controller.battleStats = async (req, res) => {
                 statCallback(err, null)
             }
 
-        }, function(statCallback) {
+        }, statCallback => {
+			
             //Most Active defender
             try {
-                Battle.mostActive('defender_king', function(err, callbackAttacker) {
+                Battle.mostActive('defender_king', (err, callbackAttacker) => {
                     if (err)
                         return statCallback(err, null)
                     else {
@@ -100,10 +105,11 @@ controller.battleStats = async (req, res) => {
             } catch (err) {
                 statCallback(err, null)
             }
-        }, function(statCallback) {
+        }, statCallback => {
+			
             //Most Active region
             try {
-                Battle.mostActive('region', function(err, callbackRegion) {
+                Battle.mostActive('region', (err, callbackRegion) => {
                     if (err)
                         return statCallback(err, null)
                     else {
@@ -117,10 +123,10 @@ controller.battleStats = async (req, res) => {
             } catch (err) {
                 statCallback(err, null)
             }
-        }, function(statCallback) {
+        }, statCallback => {
             //Most Active name
             try {
-                Battle.mostActive('name', function(err, callbackName) {
+                Battle.mostActive('name', (err, callbackName) => {
                     if (err)
                         return statCallback(err, null)
                     else {
@@ -134,14 +140,15 @@ controller.battleStats = async (req, res) => {
             } catch (err) {
                 statCallback(err, null)
             }
-        }, function(statCallback) {
+        }, statCallback => {
+			
             //Attacker Outcome win or loss
             try {
-                Battle.totalWinLoss(function(err, callbackWinLoss) {
+                Battle.totalWinLoss((err, callbackWinLoss) => {
                     if (err)
                         return statCallback(err, null)
                     else {
-                        _.filter(callbackWinLoss, function(o) {
+                        _.filter(callbackWinLoss, o => {
                             battleStats.attacker_outcome[o._id] = o.count;
                         })
                         statCallback(null, 'Done')
@@ -150,31 +157,31 @@ controller.battleStats = async (req, res) => {
             } catch (err) {
                 statCallback(err, null)
             }
-        }, function(statCallback) {
+        }, statCallback => {
+			
             //Battle type
             try {
-                Battle.battleType(function(err, callbackBattleType) {
+                Battle.battleType((err, callbackBattleType) => {
                     if (err)
                         return statCallback(err, null)
                     else {
-                        battleStats.battle_type = callbackBattleType.map(function(u) {
-                            return u._id.battle_type;
-                        })
+                        battleStats.battle_type = callbackBattleType.map(u => u._id.battle_type)
                         statCallback(null, 'Done')
                     }
                 });
             } catch (err) {
                 statCallback(err, null)
             }
-        }, function(statCallback) {
+        }, statCallback => {
+			
             //Defender size Max,Min & Avg
             try {
-                Battle.defenderSize(function(err, callbackDefenderSize) {
+                Battle.defenderSize((err, callbackDefenderSize) => {
                     if (err)
                         return statCallback(err, null)
                     else {
-                        _.filter(callbackDefenderSize, function(o) {
-                            Object.keys(o).forEach(function(key) {
+                        _.filter(callbackDefenderSize, o => {
+                            Object.keys(o).forEach(key => {
                                 if (o[key] != null) {
                                     battleStats.defender_size[key] = parseInt(o[key]);
                                 }
@@ -186,34 +193,37 @@ controller.battleStats = async (req, res) => {
             } catch (err) {
                 statCallback(err, null)
             }
-        }], function(err, statsResponse) {
+        }], (err, statsResponse) => {
             if (err) {
-               res.status(500).send({
-			error: 'Something Went Wrong!' 
-		    });
+                res.status(500).send({
+                    error: 'Something Went Wrong!'
+                });
             } else {
-				res.send({
-					status:"success",data:battleStats
-				})
+                res.send({
+                    status: "success",
+                    data: battleStats
+                })
             }
         })
     } catch (err) {
         logger.error('Error in Battle Stats- ' + err);
         res.status(500).send({
-			error: 'Something Went Wrong!' 
-		});
+            error: 'Something Went Wrong!'
+        });
     }
 }
 
 
 
 /**
- * 
- *
+ * Search based on any fields as query param
+ * Regex been used and incasesensitive.
+ * Change to $match for exact match of param value
+ * Generate dynamic subquery based on query param key & value
  */
 controller.battleSearch = async (req, res) => {
     try {
-        // To handle dynamic query param key and value
+        // To handle any dynamic query param key and value
         let query = [];
         _.findKey(req.query, function(o, i) {
             let flag = false,
@@ -250,13 +260,16 @@ controller.battleSearch = async (req, res) => {
             await Battle.battleSearch(query) : {
                 error: 'Invalid Input'
             })
-        res.send({status : "success" , data : battles })
-		
+        res.send({
+            status: "success",
+            data: battles
+        })
+
     } catch (err) {
         logger.error('Error in battle search- ' + err);
         res.status(500).send({
-			error: 'Something Went Wrong!' 
-		});
+            error: 'Something Went Wrong!'
+        });
     }
 }
 
