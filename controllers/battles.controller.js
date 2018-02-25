@@ -42,7 +42,8 @@ controller.battleCount = async (req, res) => {
         res.send({
             status: "success",
             data: {
-                battle_occured_count: battles.length
+               // battle_occured_count: battles.length
+			   battle_occured_count: battles
             }
         });
     } catch (err) {
@@ -224,7 +225,8 @@ controller.battleStats = async (req, res) => {
 controller.battleSearch = async (req, res) => {
     try {
         // To handle any dynamic query param key and value
-        let query = [];
+		if(!_.isEmpty(req.query)){
+		let query = [];
         _.findKey(req.query, function(o, i) {
             let flag = false,
                 matches, querystring;
@@ -256,15 +258,21 @@ controller.battleSearch = async (req, res) => {
                 }
             }
         });
-        let battles = (!_.isEmpty(query) ?
+        let battleSearch = (!_.isEmpty(query) ?
             await Battle.battleSearch(query) : {
                 error: 'Invalid Input'
             })
         res.send({
             status: "success",
-            data: battles
+            data: battleSearch
         })
-
+	}else{
+		let battleSearch = await Battle.getAll();
+		 res.send({
+            status: "success",
+            data: battleSearch
+        })
+	}
     } catch (err) {
         logger.error('Error in battle search- ' + err);
         res.status(500).send({

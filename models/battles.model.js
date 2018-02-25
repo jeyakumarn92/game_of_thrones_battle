@@ -83,6 +83,10 @@ const BattleSchema = mongoose.Schema({
 let BattleModel = mongoose.model('Battle', BattleSchema);
 
 
+BattleModel.getAll = () => {
+    return BattleModel.find({});
+}
+
 /**
  *  returns the list of all the places where battle has taken place 
  *
@@ -131,6 +135,9 @@ BattleModel.battleSearch = (subquery) => {
  * @return <Array> element
  */
 BattleModel.battleCount = () => {
+	/*
+	This is based on battle data.Using Aggregation.
+	
     return BattleModel.aggregate({
         $match: {
             $and: [{
@@ -208,7 +215,9 @@ BattleModel.battleCount = () => {
             }]
         }
     })
-    //return BattleModel.aggregate({$match: {$or : [{ attacker_outcome: { $ne : '' }},{ battle_type: { $ne : '' } }]} })
+	*/
+	
+    return  BattleModel.find({}).count();
 }
 
 
